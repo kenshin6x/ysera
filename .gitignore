@@ -1,8 +1,11 @@
 #env
 env/*
+*.pyc
+.DS_Store
 
 #project
 config/config.ini
 
 #editors
 .vscode/*
+.idea/*

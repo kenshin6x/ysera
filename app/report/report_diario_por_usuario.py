@@ -1,13 +1,7 @@
 #!python
 # -*- coding: utf-8 -*-
 
-from ..core import redmine_ticket_report
-
-__version__ = "1"
-__author__ = "Junior Andrade"
-__email__ = "seisxis@gmail.com"
-
-from redmine_ticket_report import RedmineTicketReport
+from ..core.redmine_ticket_report import RedmineTicketReport
 
 
 class ReportDiarioPorUsuario(RedmineTicketReport):
@@ -40,7 +34,3 @@ class ReportDiarioPorUsuario(RedmineTicketReport):
         """
 
         super().__init__()
-
-
-if __name__ == '__main__':
-    o = ReportDiarioPorUsuario()
