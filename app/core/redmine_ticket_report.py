@@ -1,10 +1,3 @@
-#!python
-# -*- coding: utf-8 -*-
-
-__version__ = "1"
-__author__ = "Junior Andrade"
-__email__ = "seisxis@gmail.com"
-
 import psycopg2
 import smtplib
 from email.mime.text import MIMEText

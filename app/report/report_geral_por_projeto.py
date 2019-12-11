@@ -1,6 +1,3 @@
-#!python
-# -*- coding: utf-8 -*-
-
 from ..core.redmine_ticket_report import RedmineTicketReport
 
 
