@@ -9,7 +9,6 @@ import psycopg2
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from pathlib import Path
 from datetime import datetime
 from configparser import ConfigParser
 
@@ -98,7 +97,7 @@ class RedmineTicketReport:
     @staticmethod
     def get_config(section):
         parser = ConfigParser()
-        parser.read(str(Path(__file__).parent) + "../../config/config.ini")
+        parser.read("config/config.ini")
         config = {}
 
         if parser.has_section(section):
