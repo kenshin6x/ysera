@@ -1,0 +1,13 @@
+[database]
+host=
+port=
+database=
+user=
+password=
+
+[mail]
+server=smtp.gmail.com
+port=587
+user
+password=
+recipients=example@mail.com,example2@mail.com
