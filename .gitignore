@@ -1,1 +1,8 @@
+#env
+env/*
+
+#project
 config/config.ini
+
+#editors
+.vscode/*
