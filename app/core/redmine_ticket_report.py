@@ -32,13 +32,24 @@ class RedmineTicketReport:
     def send(self):
         message = self.get_message()
         config = self.get_config("mail")
+        report_config = None
+
+        try:
+            report_config = self.get_config(self.__class__.__name__)
+        except (Exception):
+            pass
+
+        if report_config is not None:
+            recipients = report_config.get('recipients')
+        else:
+            recipients = config.get("recipients")
 
         if message is not None:
             now = datetime.now()
             mail_message = MIMEMultipart('alternative')
             mail_message['Subject'] = "%s - %s" % (now.strftime("%d/%m/%Y %H:%M"), self.subject)
             mail_message['From'] = config.get("user")
-            mail_message['To'] = config.get("recipients")
+            mail_message['To'] = recipients
             mail_message.attach(MIMEText(message, 'html'))
 
             try:
