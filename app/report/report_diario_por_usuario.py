@@ -10,7 +10,7 @@ class ReportDiarioPorUsuario(RedmineTicketReport):
                 u.firstname||' '||u.lastname as usuario,
                 count(distinct j.journalized_id) as qtd,
                 round(count(distinct j.journalized_id) / sum(count(distinct j.journalized_id)) over () * 100, 2)||'%' as "%",
-                array_to_string(array_agg(distinct '#'||i.id::varchar), ' ') as tickets
+                array_to_string(array_agg(distinct i.id::varchar), ' ') as tickets
             from users as u
             inner join journals as j on j.user_id = u.id
             inner join issues as i on i.id = j.journalized_id
