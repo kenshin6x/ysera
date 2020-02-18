@@ -5,29 +5,35 @@ class ReportDiarioPorUsuario(RedmineTicketReport):
     def __init__(self):
         self.subject = "Relatório de Tickets - Diário Por Usuário"
         self.query = """ 
-            select
-                to_char(j.created_on::date, 'dd/mm/yyyy') as data,
-                u.firstname||' '||u.lastname as usuario,
-                count(distinct j.journalized_id) as qtd,
-                round(count(distinct j.journalized_id) / sum(count(distinct j.journalized_id)) over () * 100, 2)||'%' as "%",
-                array_to_string(array_agg(distinct i.id::varchar), ' ') as tickets
-            from users as u
-            inner join journals as j on j.user_id = u.id
-            inner join issues as i on i.id = j.journalized_id
-            inner join projects as p on p.id = i.project_id
-            inner join members as m on m.project_id = p.id and m.user_id = u.id
-            where
-                (j.created_on::date) = (current_date)
-                and (p.name ilike '%sitac%' or p.name ilike '%sinceti%')
-                and exists (
-                        select 1 from member_roles as mr
-                        inner join roles as r on r.id = mr.role_id
-                        where 
-                                mr.member_id = m.id
-                                and r.name ilike '%tecnotech%'
-                )
-            group by j.created_on::date, usuario
-            order by j.created_on::date desc, qtd desc
+            select distinct
+            to_char(current_date, 'dd/mm/yyyy') as data,
+            u.firstname||' '||u.lastname as usuario,
+            (
+                select
+                    count (distinct j.journalized_id)
+                from journals j
+                where j.user_id = u.id
+                    and (j.created_on::date) = (current_date)
+            ) as qtd,
+            coalesce((
+                select
+                    array_to_string(array_agg(distinct i.id::varchar), ' ')
+                from journals j
+                inner join issues as i on i.id = j.journalized_id
+                where j.user_id = u.id
+                    and (j.created_on::date) = (current_date)
+            ), '---') as tickets
+        from users u
+        inner join members m on m.user_id = u.id
+        inner join member_roles mr on mr.member_id = m.id 
+        inner join roles r on r.id = mr.role_id
+        inner join projects p on p.id = m.project_id 
+        where
+            r.name ilike '%tecnotech%'
+            and p.status = 1 -- ativo
+            and u.status = 1 -- ativo
+            and u.type = 'User'
+        order by qtd desc, usuario asc
         """
 
         super().__init__()
