@@ -22,7 +22,7 @@ class ReportDiarioPorUsuario(RedmineTicketReport):
                 inner join issues as i on i.id = j.journalized_id
                 where j.user_id = u.id
                     and (j.created_on::date) = (current_date)
-            ), '---') as tickets
+            ), ' ') as tickets
         from users u
         inner join members m on m.user_id = u.id
         inner join member_roles mr on mr.member_id = m.id 
