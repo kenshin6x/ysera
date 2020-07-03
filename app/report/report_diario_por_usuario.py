@@ -5,35 +5,45 @@ class ReportDiarioPorUsuario(RedmineTicketReport):
     def __init__(self):
         self.subject = "Relatório de Tickets - Diário Por Usuário"
         self.query = """ 
+            select 
+                x.data,
+                x.usuario,
+                case 
+                    when x.qtd > 0 and x.qtd <= 2 then '<span style="color:#995bbe;">'||x.qtd::varchar||'</span>' 
+                    when x.qtd = 0 then '<span style="color:#FF0000;font-weight:bold;">0</span>' 
+                else x.qtd::varchar end as qtd,
+                x.tickets
+            from (
             select distinct
-            to_char(current_date, 'dd/mm/yyyy') as data,
-            u.firstname||' '||u.lastname as usuario,
-            (
-                select
-                    count (distinct j.journalized_id)
-                from journals j
-                where j.user_id = u.id
-                    and (j.created_on::date) = (current_date)
-            ) as qtd,
-            coalesce((
-                select
-                    array_to_string(array_agg(distinct i.id::varchar), ' ')
-                from journals j
-                inner join issues as i on i.id = j.journalized_id
-                where j.user_id = u.id
-                    and (j.created_on::date) = (current_date)
-            ), ' ') as tickets
-        from users u
-        inner join members m on m.user_id = u.id
-        inner join member_roles mr on mr.member_id = m.id 
-        inner join roles r on r.id = mr.role_id
-        inner join projects p on p.id = m.project_id 
-        where
-            r.name ilike '%tecnotech%'
-            and p.status = 1 -- ativo
-            and u.status = 1 -- ativo
-            and u.type = 'User'
-        order by qtd desc, usuario asc
+                to_char(current_date, 'dd/mm/yyyy') as data,
+                u.firstname||' '||u.lastname as usuario,
+                (
+                    select
+                        count (distinct j.journalized_id)
+                    from journals j
+                    where j.user_id = u.id
+                        and (j.created_on::date) = (current_date)
+                ) as qtd,
+                coalesce((
+                    select
+                        array_to_string(array_agg(distinct i.id::varchar), ' ')
+                    from journals j
+                    inner join issues as i on i.id = j.journalized_id
+                    where j.user_id = u.id
+                        and (j.created_on::date) = (current_date)
+                ), ' ') as tickets
+            from users u
+            inner join members m on m.user_id = u.id
+            inner join member_roles mr on mr.member_id = m.id 
+            inner join roles r on r.id = mr.role_id
+            inner join projects p on p.id = m.project_id 
+            where
+                r.name ilike '%tecnotech%'
+                and p.status = 1 -- ativo
+                and u.status = 1 -- ativo
+                and u.type = 'User'
+            order by qtd desc, usuario asc
+            ) as x
         """
 
         super().__init__()
